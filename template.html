@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MLBB ティア＆カウンター表 — Gミシック</title>
+<style>
+:root{
+  --bg:#0f0f1e; --panel:#181828; --panel2:#1f1f33; --line:#2a2a42;
+  --txt:#e8e8f0; --sub:#9a9ab0; --dim:#6a6a85;
+  --accent:#7c6cf0; --accent2:#4ac2a5;
+  --sS:#ff5c6c; --sA:#ff9f43; --sB:#ffd64a; --sC:#5cc9a5; --sD:#6a8ad6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",-apple-system,sans-serif;line-height:1.6;-webkit-text-size-adjust:100%}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+header{padding:20px 0 12px;border-bottom:1px solid var(--line)}
+.title{font-size:24px;font-weight:700;letter-spacing:.02em}
+.title .g{color:var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:8px;font-size:13px;color:var(--sub)}
+.badge{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:3px 10px}
+.updated{color:var(--accent2)}
+.updated.stale{color:var(--sA)}
+
+.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;margin:16px 0;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.ctl-group{display:flex;flex-direction:column;gap:6px}
+.ctl-label{font-size:11px;color:var(--dim);letter-spacing:.05em}
+.seg{display:inline-flex;background:var(--panel2);border-radius:8px;padding:3px;gap:2px}
+.seg button{background:none;border:none;color:var(--sub);font-size:13px;padding:6px 12px;border-radius:6px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.seg button.on{background:var(--accent);color:#fff;font-weight:600}
+.slider-group{flex:1;min-width:180px}
+.slider-row{display:flex;align-items:center;gap:10px}
+input[type=range]{flex:1;accent-color:var(--accent);cursor:pointer}
+.kval{font-variant-numeric:tabular-nums;font-size:13px;color:var(--accent2);min-width:42px;text-align:right}
+.hint{font-size:11px;color:var(--dim);margin-top:2px}
+
+.lanebar{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.lanebar button{background:var(--panel2);border:1px solid var(--line);color:var(--sub);font-family:inherit;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
+.lanebar button.on{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.lanerow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-4px 0 12px}
+.lanerow.hidden{display:none}
+.lanenote{font-size:12px;color:var(--dim)}
+.subtag{display:inline-block;font-size:10px;color:var(--dim);border:1px solid var(--line);border-radius:4px;padding:0 5px;margin-left:6px;vertical-align:middle}
+tr.is-sub .hero-cell img,.tier-hero.is-sub img{opacity:.55}
+tr.is-sub .hero-cell>div>div:first-child,.tier-hero.is-sub .tn{color:var(--sub)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+th,td{padding:9px 10px;text-align:right;white-space:nowrap}
+th{background:var(--panel);color:var(--sub);font-weight:500;font-size:12px;cursor:pointer;user-select:none;position:sticky;top:0}
+th.name-col,td.name-col{text-align:left}
+th:hover{color:var(--txt)}
+th .ar{opacity:.4;font-size:10px}
+th.sorted .ar{opacity:1;color:var(--accent)}
+tbody tr{border-top:1px solid var(--line);cursor:pointer;transition:background .1s}
+tbody tr:hover{background:var(--panel)}
+tbody tr.open{background:var(--panel2)}
+.rank-n{color:var(--dim);font-variant-numeric:tabular-nums;width:34px}
+.hero-cell{display:flex;align-items:center;gap:9px}
+.hero-cell img{width:30px;height:30px;border-radius:50%;background:var(--panel2);object-fit:cover;flex-shrink:0}
+.hero-cell .en{font-size:11px;color:var(--dim)}
+.num{font-variant-numeric:tabular-nums}
+.win-hi{color:var(--sC)} .win-lo{color:var(--sS)}
+.empty{padding:30px;text-align:center;color:var(--dim);font-size:14px}
+.tierbadge{display:inline-block;width:22px;text-align:center;font-weight:700;border-radius:4px;font-size:12px;padding:1px 0}
+.tS{background:rgba(255,92,108,.18);color:var(--sS)}
+.tA{background:rgba(255,159,67,.18);color:var(--sA)}
+.tB{background:rgba(255,214,74,.18);color:var(--sB)}
+.tC{background:rgba(92,201,165,.18);color:var(--sC)}
+.tD{background:rgba(106,138,214,.18);color:var(--sD)}
+
+.counter-row td{padding:0;background:var(--panel2)}
+.counter-inner{padding:12px 14px;text-align:left}
+.counter-ttl{font-size:12px;color:var(--sub);margin-bottom:8px}
+.counter-ttl b{color:var(--txt)}
+.counter-list{display:flex;flex-wrap:wrap;gap:8px}
+.counter-chip{display:flex;align-items:center;gap:7px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:4px 12px 4px 4px}
+.counter-chip img{width:26px;height:26px;border-radius:50%;background:var(--panel2)}
+.counter-chip .cn{font-size:13px}
+.counter-chip .inc{font-size:12px;color:var(--sC);font-variant-numeric:tabular-nums}
+
+.tiers{display:flex;flex-direction:column;gap:10px}
+.tier{display:flex;gap:12px;align-items:stretch;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tier-key{width:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800}
+.tier-key.S{background:rgba(255,92,108,.15);color:var(--sS)}
+.tier-key.A{background:rgba(255,159,67,.15);color:var(--sA)}
+.tier-key.B{background:rgba(255,214,74,.15);color:var(--sB)}
+.tier-key.C{background:rgba(92,201,165,.15);color:var(--sC)}
+.tier-key.D{background:rgba(106,138,214,.15);color:var(--sD)}
+.tier-heroes{display:flex;flex-wrap:wrap;gap:8px;padding:12px;flex:1}
+.tier-hero{display:flex;flex-direction:column;align-items:center;gap:3px;width:60px;cursor:pointer;padding:4px;border-radius:8px}
+.tier-hero:hover{background:var(--panel2)}
+.tier-hero img{width:42px;height:42px;border-radius:50%;background:var(--panel2)}
+.tier-hero .tn{font-size:11px;text-align:center;line-height:1.2}
+.tier-hero .tv{font-size:10px;color:var(--dim);font-variant-numeric:tabular-nums}
+
+.explain{margin:18px 0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.explain summary{padding:14px 16px;cursor:pointer;font-size:14px;font-weight:600;color:var(--accent2);list-style:none}
+.explain summary::-webkit-details-marker{display:none}
+.explain summary::before{content:"▸ ";color:var(--accent)}
+.explain[open] summary::before{content:"▾ "}
+.explain-body{padding:0 16px 16px;font-size:13px;color:var(--sub);line-height:1.8}
+.explain-body p{margin:8px 0}
+.explain-body b{color:var(--txt)}
+.explain-note{padding-top:8px;border-top:1px solid var(--line);color:var(--dim)}
+
+.footer{margin:24px 0 40px;font-size:12px;color:var(--dim);line-height:1.8}
+.footer a{color:var(--sub)}
+.hidden{display:none!important}
+
+@media(max-width:600px){
+  .title{font-size:20px}
+  .controls{gap:12px;padding:12px}
+  th,td{padding:7px 7px;font-size:13px}
+  .hero-cell img{width:26px;height:26px}
+  .tier-key{width:44px;font-size:20px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="title">MLBB <span class="g">ティア＆カウンター表</span></div>
+    <div class="meta">
+      <span class="badge">Gミシック</span>
+      <span class="badge">直近7日間</span>
+      <span class="updated" id="updated">最終更新：—</span>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="ctl-group">
+      <span class="ctl-label">表示</span>
+      <div class="seg" id="viewSeg">
+        <button data-view="list" class="on">一覧表</button>
+        <button data-view="tier">ティア表</button>
+      </div>
+    </div>
+    <div class="ctl-group">
+      <span class="ctl-label">評価モード</span>
+      <div class="seg" id="modeSeg">
+        <button data-mode="adj" class="on">補正勝率</button>
+        <button data-mode="win">単純勝率</button>
+        <button data-mode="score">総合スコア</button>
+      </div>
+    </div>
+    <div class="ctl-group slider-group" id="kwrap">
+      <span class="ctl-label">補正の強さ（まぐれの割引き）</span>
+      <div class="slider-row">
+        <span style="font-size:11px;color:var(--dim)">弱</span>
+        <input type="range" id="kslider" min="0" max="30" value="10">
+        <span style="font-size:11px;color:var(--dim)">強</span>
+        <span class="kval" id="kval">1.0%</span>
+      </div>
+      <div class="hint">ピック率が低いヒーローの勝率を50%へ引き戻す度合い</div>
+    </div>
+  </div>
+
+  <div class="lanebar" id="laneBar"></div>
+  <div class="lanerow" id="laneRow">
+    <div class="seg" id="mainSeg">
+      <button data-main="1" class="on">メインのみ</button>
+      <button data-main="0">サブ含む</button>
+    </div>
+    <span class="lanenote" id="laneNote"></span>
+  </div>
+
+  <div id="listView" class="tablewrap"></div>
+  <div id="tierView" class="tiers hidden"></div>
+
+  <details class="explain">
+    <summary>補正勝率とは？（まぐれ・専門家バイアスの割引き）</summary>
+    <div class="explain-body">
+      <p>公式の勝率をそのまま並べると、ピック率が極端に低いヒーローが上位に来ます。これは「そのヒーローが強い」のではなく「使っている人が少なく、その少数が使い込んだ専門家に偏っている」ことを見ている場合が多いです。</p>
+      <p>たとえるなら、テストを<b>1回だけ受けて100点</b>の人と、<b>50回受けて平均85点</b>の人。平均点は前者が上でも、実力が確かなのは後者です。1回きりの100点はまぐれかもしれません。</p>
+      <p>そこで、<b>ピック率が低いヒーローの勝率を、全体平均（50%）の方へ少し引き戻します</b>。使われている回数が少ないほど強く引き戻し、多く使われて安定しているヒーローほど実測値をそのまま残します。これが「補正勝率」です。</p>
+      <p>どのくらい引き戻すかは、上部のスライダー「補正の強さ」で調整できます。強くするほど、ピック率の低いヒーローが厳しく割り引かれます。</p>
+      <p class="explain-note">「総合スコア」は補正勝率(60%)・ピック率(25%)・BAN率(15%)を合成した指標です。BAN率は「多くのプレイヤーが警戒している＝強さの投票」とみなして加点しています。</p>
+    </div>
+  </details>
+
+  <div class="footer">
+    <div>順位の指標：<b id="modeDesc"></b></div>
+    <div>「対面有利」はヒーロー名をタップすると表示されます。数値はそのヒーローを相手にしたときの勝率上昇分（Moonton提供のカウンター情報）です。</div>
+    <div>レーンを選ぶと「メインのみ／サブ含む」を切り替えられます。メインのみ＝そのレーンを主戦場とするヒーロー。サブ含む＝そのレーンにも行けるヒーロー（「サブ」表示）。ティアは<b>表示中のヒーロー群の中での相対評価</b>なので、切り替えるとティアも変わります。</div>
+    <div>統計自体はレーン別ではないため（Moontonがレーン別勝率を公開していない）、同じヒーローはどのレーンでも同じ勝率になります。厳密な「そのレーンでの勝率」ではない点にご注意ください。</div>
+    <div>データ出典：Mobile Legends: Bang Bang 公式統計（© Moonton）。ヒーロー名・数値の解釈は当サイト独自であり、公式の見解ではありません。</div>
+  </div>
+</div>
+
+<script>
+/*__DATA__*/
+
+/*__LANES__*/
+
+const state = { view:'list', mode:'adj', k:0.01, lane:'all', mainOnly:true, sortKey:null, sortDir:-1, openId:null };
+const allHeroes = RAW.heroes;
+const byId = {}; allHeroes.forEach(h=>byId[h.id]=h);
+
+const laneLabel = {}; LANES.forEach(L=>laneLabel[L.id]=L.label);
+function isSub(h){ return state.lane!=='all' && h.main!==state.lane; }
+function laneHeroes(){
+  if(state.lane==='all') return allHeroes;
+  if(state.mainOnly) return allHeroes.filter(h=>h.main===state.lane);
+  return allHeroes.filter(h=>(h.lanes||[]).indexOf(state.lane)>=0);
+}
+
+// 更新時刻
+(function(){
+  const el=document.getElementById('updated');
+  el.textContent='最終更新：'+(RAW.updated||'—');
+  if(RAW.updated){
+    const d=new Date(RAW.updated.replace(' ','T')+':00+09:00');
+    const days=(Date.now()-d.getTime())/86400000;
+    if(days>3){ el.classList.add('stale'); el.textContent+='（更新が停止している可能性）'; }
+  }
+})();
+
+// レーンバー
+(function(){
+  const bar=document.getElementById('laneBar');
+  const btns=[{id:'all',label:'全レーン',emoji:''}].concat(LANES.map(L=>({id:L.id,label:L.label,emoji:L.emoji})));
+  bar.innerHTML=btns.map(b=>`<button data-lane="${b.id}" class="${b.id==='all'?'on':''}">${b.emoji} ${b.label}</button>`).join('');
+  bar.onclick=e=>{ const b=e.target.closest('button'); if(!b)return;
+    state.lane=b.dataset.lane; state.openId=null; state.sortKey=null;
+    bar.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    render();
+  };
+  document.getElementById('mainSeg').onclick=e=>{
+    const b=e.target.closest('button'); if(!b)return;
+    state.mainOnly = b.dataset.main==='1'; state.openId=null; state.sortKey=null;
+    document.querySelectorAll('#mainSeg button').forEach(x=>x.classList.toggle('on',x===b));
+    render();
+  };
+})();
+
+function adjWin(h,k){ return (h.pick*h.win + k*0.5)/(h.pick+k); }
+function stats(arr){ const m=arr.reduce((a,b)=>a+b,0)/arr.length;
+  const v=arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length; return [m,Math.sqrt(v)||1]; }
+
+function computeScores(pool){
+  const k=state.k;
+  pool.forEach(h=>{ h._adj=adjWin(h,k); });
+  const [am,as]=stats(pool.map(h=>h._adj));
+  const [pm,ps]=stats(pool.map(h=>Math.log(h.pick+1e-6)));
+  const [bm,bs]=stats(pool.map(h=>h.ban));
+  pool.forEach(h=>{
+    h._score = 0.60*((h._adj-am)/as) + 0.25*((Math.log(h.pick+1e-6)-pm)/ps) + 0.15*((h.ban-bm)/bs);
+  });
+}
+function metricOf(h){ return state.mode==='win'?h.win : state.mode==='adj'?h._adj : h._score; }
+function metricLabel(){ return state.mode==='win'?'単純勝率' : state.mode==='adj'?'補正勝率' : '総合スコア'; }
+function assignTiers(pool){
+  const vals=pool.map(metricOf); const [m,s]=stats(vals);
+  pool.forEach(h=>{ const z=(metricOf(h)-m)/s;
+    h._tier = z>=1?'S': z>=0.4?'A': z>=-0.4?'B': z>=-1?'C':'D'; });
+}
+function fmtPct(x){ return (x*100).toFixed(2)+'%'; }
+function fmtScore(x){ return (x>=0?'+':'')+x.toFixed(2); }
+
+function render(){
+  const pool=laneHeroes();
+  computeScores(pool);
+  assignTiers(pool);
+  document.getElementById('modeDesc').textContent=metricLabel();
+  document.getElementById('laneRow').classList.toggle('hidden', state.lane==='all');
+  document.getElementById('laneNote').textContent = state.lane==='all' ? ''
+    : `${laneLabel[state.lane]}：${pool.length}体（${state.mainOnly?'主レーンのみ':'サブレーンを含む'}）`;
+  document.getElementById('kwrap').style.visibility = state.mode==='win'?'hidden':'visible';
+  if(state.view==='list') renderList(pool); else renderTier(pool);
+}
+
+function renderList(pool){
+  const key = state.sortKey || (state.mode==='win'?'win':state.mode==='adj'?'_adj':'_score');
+  const dir = state.sortKey? state.sortDir : -1;
+  const rows=[...pool].sort((a,b)=>(a[key]-b[key])*dir);
+  const cols=[
+    {k:'_rank',label:'#',cls:'rank-n'},
+    {k:'name',label:'ヒーロー',cls:'name-col'},
+    {k:'_tier',label:'ティア'},
+    {k:'win',label:'勝率'},
+    {k:'pick',label:'ピック率'},
+    {k:'ban',label:'BAN率'},
+    {k: state.mode==='score'?'_score':'_adj', label: state.mode==='score'?'スコア':'補正勝率'},
+  ];
+  let h='<table><thead><tr>';
+  cols.forEach(c=>{
+    const sortable=!['_rank','_tier'].includes(c.k);
+    const sorted=sortable && (state.sortKey||key)===c.k;
+    h+=`<th class="${c.cls||''} ${sorted?'sorted':''}" ${sortable?`data-sort="${c.k}"`:''}>${c.label}${sortable?` <span class="ar">${sorted&&dir>0?'▲':'▼'}</span>`:''}</th>`;
+  });
+  h+='</tr></thead><tbody>';
+  if(!rows.length) h+='<tr><td colspan="7"><div class="empty">このレーンに該当するヒーローがありません</div></td></tr>';
+  rows.forEach((hero,i)=>{
+    const isOpen=state.openId===hero.id;
+    const sub=isSub(hero);
+    h+=`<tr data-id="${hero.id}" class="${isOpen?'open':''} ${sub?'is-sub':''}">
+      <td class="rank-n">${i+1}</td>
+      <td class="name-col"><div class="hero-cell"><img loading="lazy" src="${hero.head}" alt=""><div><div>${hero.name}${sub?'<span class="subtag">サブ</span>':''}</div><div class="en">${hero.en}</div></div></div></td>
+      <td><span class="tierbadge t${hero._tier}">${hero._tier}</span></td>
+      <td class="num ${hero.win>=0.52?'win-hi':hero.win<0.48?'win-lo':''}">${fmtPct(hero.win)}</td>
+      <td class="num">${fmtPct(hero.pick)}</td>
+      <td class="num">${fmtPct(hero.ban)}</td>
+      <td class="num">${state.mode==='score'?fmtScore(hero._score):fmtPct(hero._adj)}</td>
+    </tr>`;
+    if(isOpen) h+=counterRow(hero);
+  });
+  h+='</tbody></table>';
+  const lv=document.getElementById('listView'); lv.innerHTML=h;
+  lv.querySelectorAll('th[data-sort]').forEach(th=>th.onclick=()=>{
+    const k=th.dataset.sort;
+    if(state.sortKey===k) state.sortDir*=-1; else { state.sortKey=k; state.sortDir=-1; }
+    render();
+  });
+  lv.querySelectorAll('tr[data-id]').forEach(tr=>tr.onclick=()=>{
+    const id=+tr.dataset.id; state.openId=state.openId===id?null:id; render();
+  });
+}
+
+function counterRow(hero){
+  const chips=hero.sub.map(s=>{
+    const t=byId[s.id]; if(!t) return '';
+    return `<div class="counter-chip"><img loading="lazy" src="${t.head}" alt=""><span class="cn">${t.name}</span><span class="inc">+${(s.inc*100).toFixed(1)}%</span></div>`;
+  }).join('');
+  return `<tr class="counter-row"><td colspan="7"><div class="counter-inner">
+    <div class="counter-ttl"><b>${hero.name}</b> が対面で有利な相手（勝率上昇分）</div>
+    <div class="counter-list">${chips||'<span style="color:var(--dim);font-size:13px">データなし</span>'}</div>
+  </div></td></tr>`;
+}
+
+function renderTier(pool){
+  const order=['S','A','B','C','D'];
+  const groups={S:[],A:[],B:[],C:[],D:[]};
+  [...pool].sort((a,b)=>metricOf(b)-metricOf(a)).forEach(h=>groups[h._tier].push(h));
+  let h='';
+  if(!pool.length) h='<div class="empty">このレーンに該当するヒーローがありません</div>';
+  order.forEach(t=>{
+    const list=groups[t]; if(!list.length) return;
+    h+=`<div class="tier"><div class="tier-key ${t}">${t}</div><div class="tier-heroes">`;
+    list.forEach(hero=>{
+      const v=state.mode==='score'?fmtScore(hero._score):fmtPct(metricOf(hero));
+      h+=`<div class="tier-hero ${isSub(hero)?'is-sub':''}" data-id="${hero.id}"><img loading="lazy" src="${hero.head}" alt=""><div class="tn">${hero.name}</div><div class="tv">${v}</div></div>`;
+    });
+    h+='</div></div>';
+  });
+  const tv=document.getElementById('tierView'); tv.innerHTML=h;
+  tv.querySelectorAll('.tier-hero').forEach(el=>el.onclick=()=>{
+    state.view='list'; state.openId=+el.dataset.id;
+    document.querySelectorAll('#viewSeg button').forEach(b=>b.classList.toggle('on',b.dataset.view==='list'));
+    document.getElementById('listView').classList.remove('hidden');
+    document.getElementById('tierView').classList.add('hidden');
+    render();
+    setTimeout(()=>{const r=document.querySelector('tr[data-id="'+state.openId+'"]');if(r)r.scrollIntoView({behavior:'smooth',block:'center'});},50);
+  });
+}
+
+document.getElementById('viewSeg').onclick=e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  state.view=b.dataset.view;
+  document.querySelectorAll('#viewSeg button').forEach(x=>x.classList.toggle('on',x===b));
+  document.getElementById('listView').classList.toggle('hidden',state.view!=='list');
+  document.getElementById('tierView').classList.toggle('hidden',state.view!=='tier');
+  render();
+};
+document.getElementById('modeSeg').onclick=e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  state.mode=b.dataset.mode; state.sortKey=null;
+  document.querySelectorAll('#modeSeg button').forEach(x=>x.classList.toggle('on',x===b));
+  render();
+};
+const ks=document.getElementById('kslider');
+ks.oninput=()=>{ state.k=ks.value/1000; document.getElementById('kval').textContent=(ks.value/10).toFixed(1)+'%'; render(); };
+
+render();
+</script>
+</body>
+</html>
