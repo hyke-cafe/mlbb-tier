@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MLBB ティア＆カウンター表 — Gミシック（公式勝率から）</title>
+<title>MLBB ティア＆カウンター</title>
 <style>
 :root{
   --bg:#0f0f1e; --panel:#181828; --panel2:#1f1f33; --line:#2a2a42;
@@ -121,7 +121,7 @@ tbody tr.open{background:var(--panel2)}
 <body>
 <div class="wrap">
   <header>
-    <div class="title">MLBB ティア＆カウンター（公式勝率による）</div>
+    <div class="title">MLBB ティア＆カウンター表（公式勝率による）</div>
     <div class="meta">
       <span class="badge">Gミシック</span>
       <span class="badge">直近7日間</span>
@@ -157,6 +157,20 @@ tbody tr.open{background:var(--panel2)}
     </div>
   </div>
 
+
+  <div class="lanebar" id="laneBar"></div>
+  <div class="lanerow" id="laneRow">
+    <div class="seg" id="mainSeg">
+      <button data-main="1" class="on">メインのみ</button>
+      <button data-main="0">サブ含む</button>
+    </div>
+    <span class="lanenote" id="laneNote"></span>
+  </div>
+
+  <div id="listView" class="tablewrap"></div>
+  <div id="tierView" class="tiers hidden"></div>
+
+
   <details class="explain">
     <summary>指標の見かた（補正勝率・総合スコア・ティア）</summary>
     <div class="explain-body">
@@ -184,20 +198,6 @@ tbody tr.open{background:var(--panel2)}
       <p><b>BAN率が高いヒーローは、補正勝率が低めに出ます。</b>BANされると使えないのでピック率が下がり、「あまり使われていない＝信用できない」と判定されてしまうためです。強すぎてBANされているヒーローほど、この影響を受けます。総合スコアではBAN率を加点して、ある程度補っています。</p>
     </div>
   </details>
-
-  <div class="lanebar" id="laneBar"></div>
-  <div class="lanerow" id="laneRow">
-    <div class="seg" id="mainSeg">
-      <button data-main="1" class="on">メインのみ</button>
-      <button data-main="0">サブ含む</button>
-    </div>
-    <span class="lanenote" id="laneNote"></span>
-  </div>
-
-  <div id="listView" class="tablewrap"></div>
-  <div id="tierView" class="tiers hidden"></div>
-
-
 
   <div class="footer">
     <div>順位の指標：<b id="modeDesc"></b></div>
