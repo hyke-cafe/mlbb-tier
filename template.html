@@ -15,8 +15,7 @@
 body{background:var(--bg);color:var(--txt);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",-apple-system,sans-serif;line-height:1.6;-webkit-text-size-adjust:100%}
 .wrap{max-width:1000px;margin:0 auto;padding:16px}
 header{padding:20px 0 12px;border-bottom:1px solid var(--line)}
-.title{font-size:24px;font-weight:700;letter-spacing:.02em}
-.title .g{color:var(--accent)}
+.title{font-size:24px;font-weight:700;letter-spacing:.02em;color:#fff}
 .meta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:8px;font-size:13px;color:var(--sub)}
 .badge{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:3px 10px}
 .updated{color:var(--accent2)}
@@ -38,7 +37,7 @@ input[type=range]{flex:1;accent-color:var(--accent);cursor:pointer}
 .lanebar button{background:var(--panel2);border:1px solid var(--line);color:var(--sub);font-family:inherit;font-size:13px;padding:6px 14px;border-radius:8px;cursor:pointer}
 .lanebar button.on{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
 .lanerow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-4px 0 12px}
-.lanerow.hidden{display:none}
+.lanerow.dim #mainSeg{opacity:.35;pointer-events:none}
 .lanenote{font-size:12px;color:var(--dim)}
 .subtag{display:inline-block;font-size:10px;color:var(--dim);border:1px solid var(--line);border-radius:4px;padding:0 5px;margin-left:6px;vertical-align:middle}
 tr.is-sub .hero-cell img,.tier-hero.is-sub img{opacity:.55}
@@ -101,6 +100,8 @@ tbody tr.open{background:var(--panel2)}
 .explain[open] summary::before{content:"▾ "}
 .explain-body{padding:0 16px 16px;font-size:13px;color:var(--sub);line-height:1.8}
 .explain-body p{margin:8px 0}
+.explain-body .eh{color:var(--accent2);font-weight:600;margin:14px 0 4px}
+.explain-body .eh:first-child{margin-top:0}
 .explain-body b{color:var(--txt)}
 .explain-note{padding-top:8px;border-top:1px solid var(--line);color:var(--dim)}
 
@@ -120,7 +121,7 @@ tbody tr.open{background:var(--panel2)}
 <body>
 <div class="wrap">
   <header>
-    <div class="title">MLBB <span class="g">ティア＆カウンター表</span></div>
+    <div class="title">MLBB ティア＆カウンター（公式勝率による）</div>
     <div class="meta">
       <span class="badge">Gミシック</span>
       <span class="badge">直近7日間</span>
@@ -156,6 +157,29 @@ tbody tr.open{background:var(--panel2)}
     </div>
   </div>
 
+  <details class="explain">
+    <summary>指標の見かた（補正勝率・総合スコア・ティア）</summary>
+    <div class="explain-body">
+      <p class="eh">■ 補正の強さ（まぐれの割引き）</p>
+      <p>公式の勝率をそのまま並べると、ピック率が極端に低いヒーローが上位に来ます。これは「そのヒーローが強い」のではなく「使っている人が少なく、その少数が使い込んだ専門家に偏っている」ことを見ている場合が多いです。</p>
+      <p>たとえるなら、テストを<b>1回だけ受けて100点</b>の人と、<b>50回受けて平均85点</b>の人。平均点は前者が上でも、実力が確かなのは後者です。1回きりの100点はまぐれかもしれません。</p>
+      <p>そこで<b>ピック率が低いヒーローの勝率を、全体平均（50%）へ引き戻します</b>。使われている回数が少ないほど強く引き戻し、多く使われて安定しているヒーローほど実測値をそのまま残す——これが「補正勝率」です。スライダーはその引き戻しの強さで、<b>上げるほど低ピック率のヒーローが厳しく割り引かれます</b>（0%＝公式の生の勝率と一致）。</p>
+
+      <p class="eh">■ 評価モード（順位の指標）</p>
+      <p><b>補正勝率</b>… 上記の補正をかけた勝率。既定。まぐれを割り引いた実力値。</p>
+      <p><b>単純勝率</b>… 公式が出している生の勝率。補正なし。公式サイトとの突き合わせ用。</p>
+      <p><b>総合スコア</b>… 補正勝率(60%)・ピック率(25%)・BAN率(15%)を合成した指標。BAN率は「多くのプレイヤーが警戒している＝強さの投票」とみなして加点しています。</p>
+
+      <p class="eh">■ ティア（S〜D）</p>
+      <p>選んだ評価モードの数値をもとに、<b>表示中のヒーロー群の中での相対評価</b>で自動的にS〜Dへ振り分けています。平均から見て飛び抜けて高ければS、低ければDです。</p>
+      <p>相対評価なので、<b>レーンを絞ったり「メインのみ／サブ含む」を切り替えると、比べる相手が変わってティアも変わります</b>。</p>
+
+      <p class="eh">■ レーンの絞り込み</p>
+      <p><b>メインのみ</b>＝そのレーンを主戦場とするヒーロー。<b>サブ含む</b>＝そのレーンにも行けるヒーロー（「サブ」と表示）。</p>
+      <p class="explain-note">統計そのものはレーン別ではありません（Moontonがレーン別勝率を公開していないため）。同じヒーローはどのレーンでも同じ勝率です。厳密な「そのレーンでの勝率」ではない点にご注意ください。</p>
+    </div>
+  </details>
+
   <div class="lanebar" id="laneBar"></div>
   <div class="lanerow" id="laneRow">
     <div class="seg" id="mainSeg">
@@ -168,22 +192,11 @@ tbody tr.open{background:var(--panel2)}
   <div id="listView" class="tablewrap"></div>
   <div id="tierView" class="tiers hidden"></div>
 
-  <details class="explain">
-    <summary>補正勝率とは？（まぐれ・専門家バイアスの割引き）</summary>
-    <div class="explain-body">
-      <p>公式の勝率をそのまま並べると、ピック率が極端に低いヒーローが上位に来ます。これは「そのヒーローが強い」のではなく「使っている人が少なく、その少数が使い込んだ専門家に偏っている」ことを見ている場合が多いです。</p>
-      <p>たとえるなら、テストを<b>1回だけ受けて100点</b>の人と、<b>50回受けて平均85点</b>の人。平均点は前者が上でも、実力が確かなのは後者です。1回きりの100点はまぐれかもしれません。</p>
-      <p>そこで、<b>ピック率が低いヒーローの勝率を、全体平均（50%）の方へ少し引き戻します</b>。使われている回数が少ないほど強く引き戻し、多く使われて安定しているヒーローほど実測値をそのまま残します。これが「補正勝率」です。</p>
-      <p>どのくらい引き戻すかは、上部のスライダー「補正の強さ」で調整できます。強くするほど、ピック率の低いヒーローが厳しく割り引かれます。</p>
-      <p class="explain-note">「総合スコア」は補正勝率(60%)・ピック率(25%)・BAN率(15%)を合成した指標です。BAN率は「多くのプレイヤーが警戒している＝強さの投票」とみなして加点しています。</p>
-    </div>
-  </details>
+
 
   <div class="footer">
     <div>順位の指標：<b id="modeDesc"></b></div>
     <div>「対面有利」はヒーロー名をタップすると表示されます。数値はそのヒーローを相手にしたときの勝率上昇分（Moonton提供のカウンター情報）です。</div>
-    <div>レーンを選ぶと「メインのみ／サブ含む」を切り替えられます。メインのみ＝そのレーンを主戦場とするヒーロー。サブ含む＝そのレーンにも行けるヒーロー（「サブ」表示）。ティアは<b>表示中のヒーロー群の中での相対評価</b>なので、切り替えるとティアも変わります。</div>
-    <div>統計自体はレーン別ではないため（Moontonがレーン別勝率を公開していない）、同じヒーローはどのレーンでも同じ勝率になります。厳密な「そのレーンでの勝率」ではない点にご注意ください。</div>
     <div>データ出典：Mobile Legends: Bang Bang 公式統計（© Moonton）。ヒーロー名・数値の解釈は当サイト独自であり、公式の見解ではありません。</div>
   </div>
 </div>
@@ -263,8 +276,9 @@ function render(){
   computeScores(pool);
   assignTiers(pool);
   document.getElementById('modeDesc').textContent=metricLabel();
-  document.getElementById('laneRow').classList.toggle('hidden', state.lane==='all');
-  document.getElementById('laneNote').textContent = state.lane==='all' ? ''
+  document.getElementById('laneRow').classList.toggle('dim', state.lane==='all');
+  document.getElementById('laneNote').textContent = state.lane==='all'
+    ? 'レーンを選ぶと「メインのみ／サブ含む」を切り替えられます'
     : `${laneLabel[state.lane]}：${pool.length}体（${state.mainOnly?'主レーンのみ':'サブレーンを含む'}）`;
   document.getElementById('kwrap').style.visibility = state.mode==='win'?'hidden':'visible';
   if(state.view==='list') renderList(pool); else renderTier(pool);
