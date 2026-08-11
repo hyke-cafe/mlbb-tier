@@ -109,6 +109,48 @@ tbody tr.open{background:var(--panel2)}
 .footer a{color:var(--sub)}
 .hidden{display:none!important}
 
+/* トップタブ */
+.toptab{display:flex;gap:4px;margin:16px 0 4px;border-bottom:1px solid var(--line)}
+.toptab button{background:none;border:none;border-bottom:2px solid transparent;color:var(--sub);font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;cursor:pointer;margin-bottom:-1px}
+.toptab button.on{color:var(--txt);border-bottom-color:var(--accent)}
+
+/* カウンター検索 */
+.csearch{position:relative;margin:16px 0}
+.csearch input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--txt);font-family:inherit;font-size:16px;padding:13px 40px 13px 16px}
+.csearch input:focus{outline:none;border-color:var(--accent)}
+.cclear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--panel2);border:none;color:var(--sub);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;margin-bottom:20px}
+.cg-hero{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+.cg-hero:hover{background:var(--panel)}
+.cg-hero.sel{background:var(--panel2);border-color:var(--accent)}
+.cg-hero img{width:46px;height:46px;border-radius:50%;background:var(--panel2)}
+.cg-hero .cn{font-size:11px;text-align:center;line-height:1.2}
+.cg-empty{grid-column:1/-1;padding:24px;text-align:center;color:var(--dim)}
+
+/* カウンター詳細 */
+.cdetail{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:20px}
+.cd-head{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.cd-head img{width:56px;height:56px;border-radius:50%;background:var(--panel2)}
+.cd-head .cd-name{font-size:20px;font-weight:700}
+.cd-head .cd-lane{font-size:12px;color:var(--sub);margin-top:2px}
+.cd-sec{margin-bottom:16px}
+.cd-sec:last-child{margin-bottom:0}
+.cd-label{font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:8px}
+.cd-counters{display:flex;flex-wrap:wrap;gap:10px}
+.cd-cnt{display:flex;flex-direction:column;align-items:center;gap:4px;width:66px}
+.cd-cnt img{width:50px;height:50px;border-radius:50%;background:var(--panel2)}
+.cd-cnt .cnn{font-size:12px;text-align:center;line-height:1.2}
+.cd-chips{display:flex;flex-wrap:wrap;gap:8px}
+.cd-chip{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 13px;font-size:13px}
+.cd-spell .cd-chip{border-color:var(--accent);color:var(--txt)}
+.cd-cols{display:flex;gap:20px;flex-wrap:wrap}
+.cd-cols>div{flex:1;min-width:200px}
+@media(max-width:600px){
+  .toptab button{font-size:14px;padding:9px 12px}
+  .cgrid{grid-template-columns:repeat(auto-fill,minmax(56px,1fr))}
+  .cg-hero img{width:42px;height:42px}
+}
+
 @media(max-width:600px){
   .title{font-size:20px}
   .controls{gap:12px;padding:12px}
@@ -129,6 +171,12 @@ tbody tr.open{background:var(--panel2)}
     </div>
   </header>
 
+  <div class="toptab" id="topTab">
+    <button data-page="tier" class="on">ティア表</button>
+    <button data-page="counter">カウンター検索</button>
+  </div>
+
+  <div id="tierPage">
   <div class="controls">
     <div class="ctl-group">
       <span class="ctl-label">表示</span>
@@ -198,8 +246,22 @@ tbody tr.open{background:var(--panel2)}
       <p><b>BAN率が高いヒーローは、補正勝率が低めに出ます。</b>BANされると使えないのでピック率が下がり、「あまり使われていない＝信用できない」と判定されてしまうためです。強すぎてBANされているヒーローほど、この影響を受けます。総合スコアではBAN率を加点して、ある程度補っています。</p>
     </div>
   </details>
+  </div><!-- /tierPage -->
 
-  <div class="footer">
+  <div id="counterPage" class="hidden">
+    <div class="csearch">
+      <input type="text" id="cInput" placeholder="相手ヒーローを検索（かな・カナ・英語）" autocomplete="off">
+      <button id="cClear" class="cclear hidden">×</button>
+    </div>
+    <div class="cgrid" id="cGrid"></div>
+    <div class="cdetail hidden" id="cDetail"></div>
+    <div class="footer" style="border:0;margin-top:20px">
+      <div>相手ヒーローを選ぶと、有利に立てるカウンターヒーロー・対策ビルド・対策スペルが表示されます。</div>
+      <div>データはコミュニティ（tink視点）によるカウンター情報です。ヒーロー相性の参考としてご覧ください。</div>
+    </div>
+  </div><!-- /counterPage -->
+
+  <div class="footer" id="tierFooter">
     <div>順位の指標：<b id="modeDesc"></b></div>
     <div>「対面有利」はヒーロー名をタップすると表示されます。数値はそのヒーローを相手にしたときの勝率上昇分（Moonton提供のカウンター情報）です。</div>
     <div>データ出典：Mobile Legends: Bang Bang 公式統計（© Moonton）。ヒーロー名・数値の解釈は当サイト独自であり、公式の見解ではありません。</div>
@@ -210,6 +272,8 @@ tbody tr.open{background:var(--panel2)}
 /*__DATA__*/
 
 /*__LANES__*/
+
+/*__COUNTER__*/
 
 const state = { view:'list', mode:'adj', k:0.01, lane:'all', mainOnly:true, sortKey:null, sortDir:-1, openId:null };
 const allHeroes = RAW.heroes;
@@ -389,6 +453,83 @@ document.getElementById('modeSeg').onclick=e=>{
 };
 const ks=document.getElementById('kslider');
 ks.oninput=()=>{ state.k=ks.value/1000; document.getElementById('kval').textContent=(ks.value/10).toFixed(1)+'%'; render(); };
+
+/* ===== カウンター検索タブ ===== */
+const headById = {}; RAW.heroes.forEach(h=>headById[h.id]=h.head);
+const counters = (typeof COUNTER!=='undefined' && COUNTER.heroes) ? COUNTER.heroes : [];
+let cSelected = null;
+
+// トップタブ切替
+document.getElementById('topTab').onclick=e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  const page=b.dataset.page;
+  document.querySelectorAll('#topTab button').forEach(x=>x.classList.toggle('on',x===b));
+  document.getElementById('tierPage').classList.toggle('hidden',page!=='tier');
+  document.getElementById('tierFooter').classList.toggle('hidden',page!=='tier');
+  document.getElementById('counterPage').classList.toggle('hidden',page!=='counter');
+  if(page==='counter' && !cGridBuilt) buildGrid();
+};
+
+let cGridBuilt=false;
+function heroImg(id){ return headById[id]||''; }
+
+function buildGrid(filter){
+  const grid=document.getElementById('cGrid');
+  const q=(filter||'').trim().toLowerCase();
+  const list = q ? counters.filter(c=>c.yomi.indexOf(q)>=0) : counters;
+  if(!list.length){ grid.innerHTML='<div class="cg-empty">該当するヒーローがいません</div>'; return; }
+  grid.innerHTML=list.map(c=>
+    `<div class="cg-hero ${cSelected===c.id?'sel':''}" data-id="${c.id}"><img loading="lazy" src="${heroImg(c.id)}" alt=""><div class="cn">${c.name}</div></div>`
+  ).join('');
+  grid.querySelectorAll('.cg-hero').forEach(el=>el.onclick=()=>selectCounter(+el.dataset.id));
+  cGridBuilt=true;
+}
+
+function selectCounter(id){
+  cSelected=id;
+  const c=counters.find(x=>x.id===id);
+  const d=document.getElementById('cDetail');
+  if(!c){ d.classList.add('hidden'); return; }
+  const cnt=c.counters.map(x=>
+    `<div class="cd-cnt"><img loading="lazy" src="${heroImg(x.id)}" alt=""><div class="cnn">${x.name}</div></div>`
+  ).join('');
+  const cbuild=(c.cbuild||[]).map(b=>`<span class="cd-chip">${b}</span>`).join('');
+  const core=(c.core||[]).map(b=>`<span class="cd-chip">${b}</span>`).join('');
+  d.innerHTML=`
+    <div class="cd-head">
+      <img src="${heroImg(c.id)}" alt="">
+      <div><div class="cd-name">${c.name} 対策</div><div class="cd-lane">${c.lane||''}</div></div>
+    </div>
+    <div class="cd-sec">
+      <div class="cd-label">▼ 有利に立てるカウンターヒーロー</div>
+      <div class="cd-counters">${cnt||'<span style="color:var(--dim)">データなし</span>'}</div>
+    </div>
+    <div class="cd-cols">
+      <div class="cd-sec cd-spell">
+        <div class="cd-label">▼ 対策スペル</div>
+        <div class="cd-chips">${c.spell?`<span class="cd-chip">${c.spell}</span>`:'<span style="color:var(--dim)">—</span>'}</div>
+      </div>
+      <div class="cd-sec">
+        <div class="cd-label">▼ 対策ビルド</div>
+        <div class="cd-chips">${cbuild||'<span style="color:var(--dim)">—</span>'}</div>
+      </div>
+      <div class="cd-sec">
+        <div class="cd-label">▼ 相手のコアビルド（警戒）</div>
+        <div class="cd-chips">${core||'<span style="color:var(--dim)">—</span>'}</div>
+      </div>
+    </div>`;
+  d.classList.remove('hidden');
+  buildGrid(document.getElementById('cInput').value);
+  d.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+const cInput=document.getElementById('cInput');
+const cClear=document.getElementById('cClear');
+cInput.oninput=()=>{
+  cClear.classList.toggle('hidden',!cInput.value);
+  buildGrid(cInput.value);
+};
+cClear.onclick=()=>{ cInput.value=''; cClear.classList.add('hidden'); buildGrid(); cInput.focus(); };
 
 render();
 </script>
