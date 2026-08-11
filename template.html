@@ -115,9 +115,12 @@ tbody tr.open{background:var(--panel2)}
 .toptab button.on{color:var(--txt);border-bottom-color:var(--accent)}
 
 /* カウンター検索 */
-.csearch{position:relative;margin:16px 0}
-.csearch input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--txt);font-family:inherit;font-size:16px;padding:13px 40px 13px 16px}
-.csearch input:focus{outline:none;border-color:var(--accent)}
+.csearch{display:flex;gap:8px;align-items:stretch;margin:16px 0}
+.csearch-box{position:relative;flex:1}
+.csearch-box input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--txt);font-family:inherit;font-size:16px;padding:13px 40px 13px 16px}
+.csearch-box input:focus{outline:none;border-color:var(--accent)}
+.creset{flex-shrink:0;background:var(--panel2);border:1px solid var(--line);color:var(--txt);font-family:inherit;font-size:14px;font-weight:600;padding:0 18px;border-radius:10px;cursor:pointer}
+.creset:hover{background:var(--line)}
 .cclear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--panel2);border:none;color:var(--sub);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;margin-bottom:20px}
 .cg-hero{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border-radius:10px;cursor:pointer;border:1px solid transparent}
@@ -250,8 +253,11 @@ tbody tr.open{background:var(--panel2)}
 
   <div id="counterPage">
     <div class="csearch">
-      <input type="text" id="cInput" placeholder="相手ヒーローを検索（かな・カナ・英語）" autocomplete="off">
-      <button id="cClear" class="cclear hidden">×</button>
+      <div class="csearch-box">
+        <input type="text" id="cInput" placeholder="相手ヒーローを検索（かな・カナ・英語）" autocomplete="off">
+        <button id="cClear" class="cclear hidden">×</button>
+      </div>
+      <button id="cReset" class="creset">クリア</button>
     </div>
     <div class="cdetail hidden" id="cDetail"></div>
     <div class="cgrid" id="cGrid"></div>
@@ -530,6 +536,15 @@ cInput.oninput=()=>{
   buildGrid(cInput.value);
 };
 cClear.onclick=()=>{ cInput.value=''; cClear.classList.add('hidden'); buildGrid(); cInput.focus(); };
+
+document.getElementById('cReset').onclick=()=>{
+  cInput.value='';
+  cClear.classList.add('hidden');
+  cSelected=null;
+  document.getElementById('cDetail').classList.add('hidden');
+  buildGrid();
+  cInput.focus();
+};
 
 render();
 // 初期表示はカウンター検索タブ
