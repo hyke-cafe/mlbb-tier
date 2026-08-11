@@ -130,10 +130,21 @@ def render(heroes, updated):
     lanes.append("];")
     lanes_js = "\n".join(lanes)
 
+    # カウンターデータ（data/counter.json があれば埋め込む）
+    counter_path = os.path.join(ROOT, "data", "counter.json")
+    if os.path.exists(counter_path):
+        with open(counter_path, encoding="utf-8") as f:
+            counter_data = json.load(f)
+        counter_js = "const COUNTER = " + json.dumps(counter_data, ensure_ascii=False, separators=(",", ":")) + ";"
+    else:
+        counter_js = "const COUNTER = {heroes:[]};"
+
     if "/*__DATA__*/" not in html or "/*__LANES__*/" not in html:
         raise RuntimeError("template.html にプレースホルダが見つかりません。")
 
-    html = html.replace("/*__DATA__*/", data_js).replace("/*__LANES__*/", lanes_js)
+    html = (html.replace("/*__DATA__*/", data_js)
+                .replace("/*__LANES__*/", lanes_js)
+                .replace("/*__COUNTER__*/", counter_js))
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"  index.html を生成 ({len(html):,} bytes)")
