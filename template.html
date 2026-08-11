@@ -141,6 +141,10 @@ tbody tr.open{background:var(--panel2)}
 .cd-label{font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:8px}
 .cd-counters{display:flex;flex-wrap:wrap;gap:10px}
 .cd-cnt{display:flex;flex-direction:column;align-items:center;gap:4px;width:66px}
+.cd-cnt.clk{cursor:pointer;border-radius:8px;padding:4px 0;transition:background .1s}
+.cd-cnt.clk:hover{background:var(--panel2)}
+.cd-cnt.clk:hover img{outline:2px solid var(--accent)}
+.cd-cnt.clk .cnn{color:var(--accent2)}
 .cd-cnt img{width:50px;height:50px;border-radius:50%;background:var(--panel2)}
 .cd-cnt .cnn{font-size:12px;text-align:center;line-height:1.2}
 .cd-chips{display:flex;flex-wrap:wrap;gap:8px}
@@ -263,7 +267,7 @@ tbody tr.open{background:var(--panel2)}
     <div class="cgrid" id="cGrid"></div>
     <div class="footer" style="border:0;margin-top:20px">
       <div>相手ヒーローを選ぶと、有利に立てるカウンターヒーロー・対策ビルド・対策スペルが表示されます。</div>
-      <div>データはコミュニティ（tink視点）によるカウンター情報です。ヒーロー相性の参考としてご覧ください。</div>
+      <div>データはtinkさん視点ベースによるカウンター情報です。ヒーロー相性の参考としてご覧ください。</div>
     </div>
   </div><!-- /counterPage -->
 
@@ -496,9 +500,11 @@ function selectCounter(id){
   const c=counters.find(x=>x.id===id);
   const d=document.getElementById('cDetail');
   if(!c){ d.classList.add('hidden'); return; }
-  const cnt=c.counters.map(x=>
-    `<div class="cd-cnt"><img loading="lazy" src="${heroImg(x.id)}" alt=""><div class="cnn">${x.name}</div></div>`
-  ).join('');
+  const hasDetail=new Set(counters.map(x=>x.id));
+  const cnt=c.counters.map(x=>{
+    const clickable=hasDetail.has(x.id);
+    return `<div class="cd-cnt ${clickable?'clk':''}" ${clickable?`data-goto="${x.id}"`:''}><img loading="lazy" src="${heroImg(x.id)}" alt=""><div class="cnn">${x.name}</div></div>`;
+  }).join('');
   const cbuild=(c.cbuild||[]).map(b=>`<span class="cd-chip">${b}</span>`).join('');
   const core=(c.core||[]).map(b=>`<span class="cd-chip">${b}</span>`).join('');
   d.innerHTML=`
@@ -525,6 +531,12 @@ function selectCounter(id){
       </div>
     </div>`;
   d.classList.remove('hidden');
+  d.querySelectorAll('.cd-cnt.clk').forEach(el=>el.onclick=()=>{
+    const gid=+el.dataset.goto;
+    cInput.value=''; cClear.classList.add('hidden');
+    selectCounter(gid);
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
   buildGrid(document.getElementById('cInput').value);
   d.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
