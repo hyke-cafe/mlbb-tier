@@ -172,11 +172,11 @@ tbody tr.open{background:var(--panel2)}
   </header>
 
   <div class="toptab" id="topTab">
-    <button data-page="tier" class="on">ティア表</button>
-    <button data-page="counter">カウンター検索</button>
+    <button data-page="counter" class="on">カウンター検索</button>
+    <button data-page="tier">ティア表</button>
   </div>
 
-  <div id="tierPage">
+  <div id="tierPage" class="hidden">
   <div class="controls">
     <div class="ctl-group">
       <span class="ctl-label">表示</span>
@@ -248,13 +248,13 @@ tbody tr.open{background:var(--panel2)}
   </details>
   </div><!-- /tierPage -->
 
-  <div id="counterPage" class="hidden">
+  <div id="counterPage">
     <div class="csearch">
       <input type="text" id="cInput" placeholder="相手ヒーローを検索（かな・カナ・英語）" autocomplete="off">
       <button id="cClear" class="cclear hidden">×</button>
     </div>
-    <div class="cgrid" id="cGrid"></div>
     <div class="cdetail hidden" id="cDetail"></div>
+    <div class="cgrid" id="cGrid"></div>
     <div class="footer" style="border:0;margin-top:20px">
       <div>相手ヒーローを選ぶと、有利に立てるカウンターヒーロー・対策ビルド・対策スペルが表示されます。</div>
       <div>データはコミュニティ（tink視点）によるカウンター情報です。ヒーロー相性の参考としてご覧ください。</div>
@@ -532,6 +532,10 @@ cInput.oninput=()=>{
 cClear.onclick=()=>{ cInput.value=''; cClear.classList.add('hidden'); buildGrid(); cInput.focus(); };
 
 render();
+// 初期表示はカウンター検索タブ
+document.getElementById('tierFooter').classList.add('hidden');
+buildGrid();
+
 </script>
 </body>
 </html>
